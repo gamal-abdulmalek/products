@@ -53,7 +53,23 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $product = Product::find($id);
+        if(!$product){
+            return response()->json(['message'=>"product not found"],404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:70',
+            'description' => 'required|string',
+            'photo' => 'required|string|max:70',
+            'price' => 'required|numeric',
+            'SKU' => 'required|numeric',
+            'minQty' => 'required|numeric',
+            'category_id' => 'required|numeric'
+        ]);
+
+        $product->update($validated);
+        return response()->json($product,200);
     }
 
     /**
