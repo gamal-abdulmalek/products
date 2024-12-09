@@ -23,10 +23,30 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // Return an API token
         $token = $user->createToken('auth_token')->plainTextToken;
         $hasPermToCreateProducts = $user->can('create products');
 
         return response()->json(['token' => $token, 'user' => $user,"product"=>$hasPermToCreateProducts], 200);
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        $user->assignRole('viewer'); 
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json(['token' => $token, 'user' => $user], 201);
     }
 }
