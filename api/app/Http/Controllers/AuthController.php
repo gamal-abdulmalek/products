@@ -78,4 +78,36 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'OTP has been sent to your email.'], 200);
     }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'otp' => 'required|numeric',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        
+        $user = User::where('email', $request->email)->first();
+
+        if ($user->otp != $request->otp) {
+            return response()->json(['error' => 'Invalid OTP.'], 400);
+        }
+
+        if (Carbon::now()->greaterThan($user->otp_expires_at)) {
+            return response()->json(['error' => 'OTP has expired.'], 400);
+        }
+
+        $user->password = bcrypt($request->password);
+
+        $user->otp = null;
+        $user->otp_expires_at = null;
+        $user->save();
+
+        return response()->json(['message' => 'Password has been reset successfully.'], 200);
+    }
 }
