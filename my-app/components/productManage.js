@@ -10,41 +10,16 @@ import {
 } from '@mui/material';
 import DashboardCard from './ui/DashboardCard';
 import ProductModal from './modal/productModal';
-
-const products = [
-    {
-        id: "1",
-        sku: "4gfrr",
-        pname: "phone",
-        budget: "3.9",
-    },
-    {
-        id: "2",
-        sku: "4gfrr",
-        pname: "phone",
-        budget: "24.5",
-    },
-    {
-        id: "3",
-        sku: "4gfrr",
-        pname: "phone",
-        budget: "12.8",
-    },
-    {
-        id: "4",
-        sku: "4gfrr",
-        pname: "phone",
-        budget: "2.4",
-    },
-];
+import { addProduct } from '@/api/product';
 
 
 const productManage = ({ data }) => {
+    const { mutate: product, isLoading, serverError, setServerError } = addProduct();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null); // For editing a product
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     const handleOpenModal = (product = null) => {
-        setSelectedProduct(product); // Set the product for updating or null for adding
+        setSelectedProduct(product); 
         setIsModalOpen(true);
     };
 
@@ -52,13 +27,14 @@ const productManage = ({ data }) => {
         setIsModalOpen(false);
       };
     
-      const handleSaveProduct = (product) => {
+      const handleSaveProduct = (productData) => {
         if (selectedProduct) {
           // Update logic
-          console.log("Updating product:", product);
+          console.log("Updating product:", productData);
         } else {
-          // Add logic
-          console.log("Adding product:", product);
+            console.log("Adding product");
+        product(productData);
+          
         }
       };
     return (
@@ -170,7 +146,7 @@ const productManage = ({ data }) => {
                                                 handleOpenModal({
                                                   productId:product.id,
                                                   productName: product.name,
-                                                  productSKU: product.SKU,
+                                                  SKU: product.SKU,
                                                   description: product.description,
                                                   price: product.price,
                                                   minQty: product.minQty,

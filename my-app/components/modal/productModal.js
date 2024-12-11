@@ -12,50 +12,50 @@ import {
 } from "@mui/material";
 
 const ProductModal = ({ open, handleClose, productData = null,categoryData, onSave }) => {
-  const [productName, setProductName] = useState("");
-  const [productSKU, setProductSKU] = useState("");
+  const [name, setName] = useState("");
+  const [SKU, setProductSKU] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [minQty, setMinQty] = useState("");
-  const [image, setImage] = useState(null);
+  const [photo, setPhoto] = useState(null);
 
   useEffect(() => {
     if (productData) {
-      setProductName(productData.productName || "");
-      setProductSKU(productData.productSKU || "");
+      setName(productData.productName || "");
+      setProductSKU(productData.SKU || "");
       setDescription(productData.description || "");
       setPrice(productData.price || "");
       setCategory(productData.category || "");
       setMinQty(productData.minQty || "");
-      setImage(null); 
+      setPhoto(null);
     } else {
         
-      setProductName("");
+      setName("");
       setProductSKU("");
       setDescription("");
       setPrice("");
       setCategory("");
       setMinQty("");
-      setImage(null);
+      setPhoto(null);
     }
   }, [productData]);
 
   const handleImageUpload = (e) => {
-    setImage(e.target.files[0]);
+    setPhoto(e.target.files[0]);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const product = {
-      productName,
-      productSKU,
-      description,
-      price,
-      category,
-      image,
-      minQty,
+      name:name,
+      SKU:SKU,
+      description:description,
+      price:price,
+      category_id:category,
+      photo:photo,
+      minQty:minQty,
     };
 
     onSave(product);
@@ -98,8 +98,8 @@ const ProductModal = ({ open, handleClose, productData = null,categoryData, onSa
             variant="outlined"
             fullWidth
             margin="normal"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
 
           {/* Product SKU */}
@@ -108,7 +108,7 @@ const ProductModal = ({ open, handleClose, productData = null,categoryData, onSa
             variant="outlined"
             fullWidth
             margin="normal"
-            value={productSKU}
+            value={SKU}
             onChange={(e) => setProductSKU(e.target.value)}
           />
 
@@ -173,9 +173,9 @@ const ProductModal = ({ open, handleClose, productData = null,categoryData, onSa
               onChange={handleImageUpload}
             />
           </Button>
-          {image && (
+          {photo && (
             <Typography variant="caption" display="block" sx={{ marginTop: 1 }}>
-              Selected File: {image.name}
+              Selected File: {photo.name}
             </Typography>
           )}
 
