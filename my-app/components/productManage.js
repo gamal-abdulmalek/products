@@ -1,4 +1,4 @@
-
+import { useState } from 'react';
 import {
     Typography, Box,
     Table,
@@ -9,6 +9,7 @@ import {
     Button
 } from '@mui/material';
 import DashboardCard from './ui/DashboardCard';
+import ProductModal from './modal/productModal';
 
 const products = [
     {
@@ -38,7 +39,28 @@ const products = [
 ];
 
 
-const productManage = () => {
+const productManage = ({ data }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null); // For editing a product
+
+    const handleOpenModal = (product = null) => {
+        setSelectedProduct(product); // Set the product for updating or null for adding
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+      };
+    
+      const handleSaveProduct = (product) => {
+        if (selectedProduct) {
+          // Update logic
+          console.log("Updating product:", product);
+        } else {
+          // Add logic
+          console.log("Adding product:", product);
+        }
+      };
     return (
 
         <DashboardCard title="Products Management" action={
@@ -46,6 +68,7 @@ const productManage = () => {
                 <Button
                     variant='contained'
                     color='primary'
+                    onClick={() => handleOpenModal()}
                 >
                     Add New Product
                 </Button>
@@ -100,7 +123,7 @@ const productManage = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {products.map((product) => (
+                        {data.map((product, index) => (
                             <TableRow key={product.name}>
                                 <TableCell>
                                     <Typography
@@ -109,7 +132,7 @@ const productManage = () => {
                                             fontWeight: "500",
                                         }}
                                     >
-                                        {product.id}
+                                        {index + 1}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -121,21 +144,21 @@ const productManage = () => {
                                     >
                                         <Box>
                                             <Typography variant="subtitle2" fontWeight={600}>
-                                                {product.sku}
+                                                {product.SKU}
                                             </Typography>
                                         </Box>
                                     </Box>
                                 </TableCell>
                                 <TableCell>
                                     <Typography color="textSecondary" variant="subtitle2" fontWeight={400}>
-                                        {product.pname}
+                                        {product.name}
                                     </Typography>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Typography variant="h6">{product.budget}</Typography>
+                                    <Typography variant="h6">{product.price}</Typography>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Typography variant="h6">{product.budget}</Typography>
+                                    <Typography variant="h6">{product.minQty}</Typography>
                                 </TableCell>
                                 <TableCell align="right">
                                     <Box sx={{ display: "flex", gap: 1 }}>
@@ -143,6 +166,17 @@ const productManage = () => {
                                             variant='contained'
                                             color='primary'
                                             size='small'
+                                            onClick={() =>
+                                                handleOpenModal({
+                                                  productId:product.id,
+                                                  productName: product.name,
+                                                  productSKU: product.SKU,
+                                                  description: product.description,
+                                                  price: product.price,
+                                                  minQty: product.minQty,
+                                                  category: product.category_id,
+                                                })
+                                              }
                                         >
                                             update
                                         </Button>
@@ -160,6 +194,13 @@ const productManage = () => {
                     </TableBody>
                 </Table>
             </Box>
+            <ProductModal
+            open={isModalOpen}
+            handleClose={handleCloseModal}
+            productData={selectedProduct}
+            categoryData={data.categories}
+            onSave={handleSaveProduct}
+        />
         </DashboardCard>
     );
 };
