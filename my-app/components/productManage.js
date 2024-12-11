@@ -10,11 +10,12 @@ import {
 } from '@mui/material';
 import DashboardCard from './ui/DashboardCard';
 import ProductModal from './modal/productModal';
-import { addProduct } from '@/api/product';
+import { addProduct, updateProduct } from '@/api/product';
 
 
 const productManage = ({ data }) => {
     const { mutate: product, isLoading, serverError, setServerError } = addProduct();
+    const { mutate: updatedProduct, isUpdateLoading, updateError, setUpdateError } = updateProduct();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -29,7 +30,8 @@ const productManage = ({ data }) => {
     
       const handleSaveProduct = (productData) => {
         if (selectedProduct) {
-          // Update logic
+            productData["id"] = selectedProduct.id;
+            updatedProduct(productData)
           console.log("Updating product:", productData);
         } else {
             console.log("Adding product");
@@ -144,13 +146,13 @@ const productManage = ({ data }) => {
                                             size='small'
                                             onClick={() =>
                                                 handleOpenModal({
-                                                  productId:product.id,
-                                                  productName: product.name,
+                                                  id:product.id,
+                                                  name: product.name,
                                                   SKU: product.SKU,
                                                   description: product.description,
                                                   price: product.price,
                                                   minQty: product.minQty,
-                                                  category: product.category_id,
+                                                  category_id: product.category_id,
                                                 })
                                               }
                                         >

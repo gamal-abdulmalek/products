@@ -27,3 +27,25 @@ export function addProduct() {
   
     return { mutate, isLoading,serverError, setServerError };
   }
+
+  export function updateProduct() {
+    let [updateError, setUpdateError] = useState(null);
+  
+    const { mutate, isLoading } = useMutation( async (input)=>{
+        console.log("update",input);
+        const response = await HttpClient.put(`${API_ENDPOINTS.PRODUCTS}/${input.id}`, input);
+        return response;
+    }
+    , {
+      onSuccess: (data) => {
+        console.log("Product updated Successfully");
+        console.log(data);
+      },
+      onError: (error) => {
+        console.log(error.message);
+        alert(error.message);
+      },
+    });
+  
+    return { mutate, isUpdateLoading:isLoading,updateError, setUpdateError };
+  }
