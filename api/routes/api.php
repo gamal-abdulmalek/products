@@ -20,6 +20,7 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::apiResource("products",ProductController::class);
 
 Route::get('/roles', [RolePermissionController::class, 'getRoles']);
+Route::get('/permissions', [RolePermissionController::class, 'getPermissions']);
 
 
 

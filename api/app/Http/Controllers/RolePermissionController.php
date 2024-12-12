@@ -13,5 +13,11 @@ class RolePermissionController extends Controller
         return response()->json($roles);
     }
 
+    public function getPermissions()
+    {
+        $permissions = Permission::all();
+        return response()->json($permissions);
+    }
+
     
 }
