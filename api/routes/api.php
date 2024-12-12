@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\controllers\ProductController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthController;
 use Spatie\Permission\Models\Permission;
 
@@ -28,5 +29,6 @@ Route::put('/roles/{role}', [RolePermissionController::class, 'updateRole']);
 Route::delete('/roles/{role}', [RolePermissionController::class, 'deleteRole']);
 
 
+Route::get('/categories', [CategoryController::class, 'index']);
 
 
