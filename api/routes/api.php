@@ -28,7 +28,6 @@ Route::post('/roles', [RolePermissionController::class, 'createRole']);
 Route::put('/roles/{role}', [RolePermissionController::class, 'updateRole']);
 Route::delete('/roles/{role}', [RolePermissionController::class, 'deleteRole']);
 
-
 Route::get('/categories', [CategoryController::class, 'index']);
 
 
