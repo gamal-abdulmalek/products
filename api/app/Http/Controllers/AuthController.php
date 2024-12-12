@@ -79,20 +79,18 @@ class AuthController extends Controller
         return response()->json(['message' => 'OTP has been sent to your email.'], 200);
     }
 
-    public function resetPassword(Request $request)
+    public function verifyOtp(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
-            'otp' => 'required|numeric',
-            'password' => 'required|string|min:8',
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|integer',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-
-        
         $user = User::where('email', $request->email)->first();
+
+        // if (!$user || $user->otp !== (int) $request->otp || now()->greaterThan($user->otp_expires_at)) {
+        //     return response()->json(['message' => 'Invalid or expired OTP'], 400);
+        // }
 
         if ($user->otp != $request->otp) {
             return response()->json(['error' => 'Invalid OTP.'], 400);
@@ -102,12 +100,28 @@ class AuthController extends Controller
             return response()->json(['error' => 'OTP has expired.'], 400);
         }
 
-        $user->password = bcrypt($request->password);
+        return response()->json(['message' => 'OTP verified successfully']);
+    }
 
-        $user->otp = null;
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|confirmed|min:8',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->otp = null; // Clear OTP
         $user->otp_expires_at = null;
         $user->save();
 
-        return response()->json(['message' => 'Password has been reset successfully.'], 200);
+        return response()->json(['message' => 'Password reset successfully']);
+        
+
     }
 }
