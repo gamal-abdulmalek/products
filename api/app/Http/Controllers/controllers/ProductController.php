@@ -4,6 +4,7 @@ namespace App\Http\Controllers\controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Utils\ProductUtil;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -17,6 +18,7 @@ class ProductController extends Controller
         return response()->json($products,200);
     }
 
+
     /**
      * Store a newly created resource in storage.
      */
@@ -25,12 +27,25 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:70',
             'description' => 'required|string',
-            'photo' => 'required|string|max:70',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             'price' => 'required|numeric',
             'SKU' => 'required|numeric',
             'minQty' => 'required|numeric',
             'category_id' => 'required|numeric'
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('photo')) {
+            $imagePath = ProductUtil::upload($request->file('photo'), 'products');
+            if (!$imagePath) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to upload photo.',
+                ], 500);
+            }
+        }
+
+        $validated['photo'] = $imagePath;
 
         $product = Product::create($validated);
         return response()->json($product,201);
@@ -59,15 +74,25 @@ class ProductController extends Controller
         }
 
         $validated = $request->validate([
+            'id' => 'required|numeric',
             'name' => 'required|string|max:70',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
             'description' => 'required|string',
-            'photo' => 'required|string|max:70',
             'price' => 'required|numeric',
             'SKU' => 'required|numeric',
             'minQty' => 'required|numeric',
             'category_id' => 'required|numeric'
         ]);
 
+        $imagePath = null;
+        if ($request->hasFile('photo')) {
+            $imagePath = ProductUtil::upload($request->file('photo'), 'products');
+            if ($imagePath) {
+                $validated['photo'] = $imagePath;
+            }
+        }
+
+        
         $product->update($validated);
         return response()->json($product,200);
     }
