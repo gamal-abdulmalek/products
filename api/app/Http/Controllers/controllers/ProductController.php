@@ -26,9 +26,9 @@ class ProductController extends Controller
         $products = Product::with('category') 
             ->where(function ($query) use ($search) {
                 if ($search) {
-                    $query->where('name', 'LIKE', "%{$search}%") // Search by product name
+                    $query->where('name', 'LIKE', "%{$search}%") 
                         ->orWhereHas('category', function ($query) use ($search) {
-                            $query->where('name', 'LIKE', "%{$search}%"); // Search by category name
+                            $query->where('name', 'LIKE', "%{$search}%"); 
                         });
                 }
             })
