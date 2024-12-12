@@ -18,6 +18,7 @@ Route::post('/forgot-password', [AuthController::class, 'sendOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::apiResource("products",ProductController::class);
+Route::get('/fetchproducts', [ProductController::class, 'fetchProducts']);
 
 Route::get('/roles', [RolePermissionController::class, 'getRoles']);
 Route::get('/permissions', [RolePermissionController::class, 'getPermissions']);

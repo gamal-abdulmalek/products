@@ -18,6 +18,30 @@ class ProductController extends Controller
         return response()->json($products,200);
     }
 
+    public function fetchProducts(Request $request)
+    {
+        $perPage = $request->input('per_page', 8); 
+        $search = $request->input('search', ''); 
+
+        $products = Product::with('category') 
+            ->where(function ($query) use ($search) {
+                if ($search) {
+                    $query->where('name', 'LIKE', "%{$search}%") // Search by product name
+                        ->orWhereHas('category', function ($query) use ($search) {
+                            $query->where('name', 'LIKE', "%{$search}%"); // Search by category name
+                        });
+                }
+            })
+            ->paginate($perPage);
+
+        return response()->json([
+            'data' => $products->items(), // The paginated product data
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
+            'per_page' => $products->perPage(),
+            'total' => $products->total(),
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
