@@ -21,6 +21,9 @@ Route::apiResource("products",ProductController::class);
 
 Route::get('/roles', [RolePermissionController::class, 'getRoles']);
 Route::get('/permissions', [RolePermissionController::class, 'getPermissions']);
+Route::post('/roles', [RolePermissionController::class, 'createRole']);
+Route::put('/roles/{role}', [RolePermissionController::class, 'updateRole']);
+Route::delete('/roles/{role}', [RolePermissionController::class, 'deleteRole']);
 
 
 
