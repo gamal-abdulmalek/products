@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\controllers\ProductController;
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\AuthController;
 use Spatie\Permission\Models\Permission;
 
@@ -17,6 +18,9 @@ Route::post('/forgot-password', [AuthController::class, 'sendOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::apiResource("products",ProductController::class);
+
+Route::get('/roles', [RolePermissionController::class, 'getRoles']);
+
 
 
 
