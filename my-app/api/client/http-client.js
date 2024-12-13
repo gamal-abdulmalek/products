@@ -6,7 +6,9 @@ const Axios = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
   timeout: 5000000,
   headers: {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data',
+    
   },
 });
 
