@@ -22,6 +22,7 @@ const fetchProducts = async ({ pageParam = 1, queryKey }) => {
 };
 
 export default function ProductGrid() {
+  const observerRef = useRef(null);
   const [search, setSearch] = useState("");
 
   const {
@@ -40,7 +41,21 @@ export default function ProductGrid() {
     },
   });
 
-  
+  const handleObserver = React.useCallback(
+    (entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage]
+  );
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.5 }); 
+    if (observerRef.current) observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -103,6 +118,13 @@ export default function ProductGrid() {
         </Grid>
       )}
 
+      {isFetchingNextPage && (
+        <Box display="flex" justifyContent="center" my={4}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      <div ref={observerRef} style={{ height: "20px", visibility: "hidden" }} />
     </Container>
   );
 }

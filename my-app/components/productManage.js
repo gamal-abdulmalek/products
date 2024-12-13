@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import DashboardCard from './ui/DashboardCard';
 import ProductModal from './modal/productModal';
+import CategoryModal from './modal/categoryModal';
 import { addProduct, updateProduct } from '@/api/product';
 
 
@@ -17,6 +18,7 @@ const productManage = ({ data }) => {
     const { mutate: product, isLoading, serverError, setServerError } = addProduct();
     const { mutate: updatedProduct, isUpdateLoading, updateError, setUpdateError } = updateProduct();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
     const handleOpenModal = (product = null) => {
@@ -27,6 +29,14 @@ const productManage = ({ data }) => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
       };
+
+      const handleCategoryOpenModal = (product = null) => {
+        setIsCategoryModalOpen(true);
+    };
+
+    const handleCategoryCloseModal = () => {
+        setIsCategoryModalOpen(false);
+      };
     
       const handleSaveProduct = (productData) => {
         if (selectedProduct) {
@@ -34,9 +44,8 @@ const productManage = ({ data }) => {
             updatedProduct(productData)
           console.log("Updating product:", productData);
         } else {
-            console.log("Adding product");
-        product(productData);
-          
+            // alert("Adding product successfully");
+            product(productData);  
         }
       };
     return (
@@ -53,6 +62,7 @@ const productManage = ({ data }) => {
                 <Button
                     variant='contained'
                     color='warning'
+                    onClick={()=>handleCategoryOpenModal()}
                 >
                     Import From Excel
                 </Button>
@@ -178,6 +188,11 @@ const productManage = ({ data }) => {
             productData={selectedProduct}
             categoryData={data.categories}
             onSave={handleSaveProduct}
+        />
+
+        <CategoryModal
+            open={isCategoryModalOpen}
+            handleClose={handleCategoryCloseModal}
         />
         </DashboardCard>
     );

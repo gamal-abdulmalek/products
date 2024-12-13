@@ -17,7 +17,7 @@ export function addProduct() {
     , {
       onSuccess: (data) => {
         console.log("Product Added Successfully");
-        console.log(data);
+        alert(data.message);
       },
       onError: (error) => {
         console.log(error.message);
@@ -39,7 +39,7 @@ export function addProduct() {
     , {
       onSuccess: (data) => {
         console.log("Product updated Successfully");
-        console.log(data);
+        alert(data.message);
       },
       onError: (error) => {
         console.log(error.message);

@@ -1,80 +1,75 @@
-import Link from "next/link";
-import { Grid, Box, Card, Stack, Typography } from "@mui/material";
-import AuthLogin from "../../components/auth/AuthLogin";
+import { useState } from 'react';
+import { TextField, Button, Container, Typography, Box, Link } from '@mui/material';
+import { useRouter } from 'next/router';
+import { HttpClient } from '@/api/client/http-client';
 
-const Login = () => {
+export default function Login() {
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const response = await HttpClient.post('api/login', form);
+      localStorage.setItem('token', response.token); // Save token in localStorage
+      router.push('/dashboard/products'); // Redirect to dashboard or any protected route
+    } catch (err) {
+      setError(err.message || 'Something went wrong');
+    }
+  };
+
   return (
-      <Box
-        sx={{
-          position: "relative",
-          "&:before": {
-            content: '""',
-            background: "radial-gradient(#d2f1df, #d3d7fa, #bad8f4)",
-            backgroundSize: "400% 400%",
-            animation: "gradient 15s ease infinite",
-            position: "absolute",
-            height: "100%",
-            width: "100%",
-            opacity: "0.3",
-          },
-        }}
-      >
-        <Grid
-          container
-          spacing={0}
-          justifyContent="center"
-          sx={{ height: "100vh" }}
-        >
-          <Grid
-            item
-            xs={12}
-            sm={12}
-            lg={4}
-            xl={3}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Card
-              elevation={9}
-              sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
-            >
-              <AuthLogin
-                subtext={
-                  <Typography
-                    variant="subtitle1"
-                    textAlign="center"
-                    color="textSecondary"
-                    mb={1}
-                  >
-                    Login
-                  </Typography>
-                }
-                subtitle={
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    justifyContent="center"
-                    mt={3}
-                  >
-                    <Typography
-                      component={Link}
-                      href="/authentication/register"
-                      fontWeight="500"
-                      sx={{
-                        textDecoration: "none",
-                        color: "primary.main",
-                      }}
-                    >
-                      Create an account
-                    </Typography>
-                  </Stack>
-                }
-              />
-            </Card>
-          </Grid>
-        </Grid>
+    <Container maxWidth="sm">
+      <Box sx={{ mt: 8 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Login
+        </Typography>
+        {error && <Typography color="error">{error}</Typography>}
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            Login
+          </Button>
+        </form>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2">
+            Don't have an account?{' '}
+            <Link href="/authentication/register" underline="hover">
+              Register here
+            </Link>
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Forgot your password?{' '}
+            <Link href="/authentication/forgotpassword" underline="hover">
+              Reset it here
+            </Link>
+          </Typography>
+        </Box>
       </Box>
+    </Container>
   );
-};
-export default Login;
+}
