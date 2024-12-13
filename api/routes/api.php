@@ -31,3 +31,7 @@ Route::delete('/roles/{role}', [RolePermissionController::class, 'deleteRole']);
 Route::get('/categories', [CategoryController::class, 'index']);
 
 
+
+Route::post('/categories/import', [CategoryController::class, 'import']);
+
+
