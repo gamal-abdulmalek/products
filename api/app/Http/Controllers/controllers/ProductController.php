@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Utils\ProductUtil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ProductController extends Controller
 {
@@ -58,6 +62,10 @@ class ProductController extends Controller
             'category_id' => 'required|numeric'
         ]);
 
+        if (Product::where('SKU', $request->SKU)->exists()) {
+            return response()->json(['message' => 'The SKU already exists'], 200);
+        }
+
         $imagePath = null;
         if ($request->hasFile('photo')) {
             $imagePath = ProductUtil::upload($request->file('photo'), 'products');
@@ -72,6 +80,20 @@ class ProductController extends Controller
         $validated['photo'] = $imagePath;
 
         $product = Product::create($validated);
+
+
+        $admins = User::role('admin')->get();
+
+        foreach ($admins as $admin) {
+            Mail::raw(
+                "The product '{$product->name}' has been added.",
+                function ($message) use ($admin) {
+                    $message->to($admin->email)
+                            ->subject('Product Notification');
+                }
+            );
+        }
+
         return response()->json($product,201);
     }
 
@@ -118,7 +140,20 @@ class ProductController extends Controller
 
         
         $product->update($validated);
+
+        $admins = User::role('admin')->get();
+
+        foreach ($admins as $admin) {
+            Mail::raw(
+                "The product '{$product->name}' has been updated.",
+                function ($message) use ($admin) {
+                    $message->to($admin->email)
+                            ->subject('Product Notification');
+                }
+            );
+        }
         return response()->json($product,200);
+        return response()->json(['message'=>"product updated successfully"],200);
     }
 
     /**
