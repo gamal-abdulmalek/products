@@ -62,6 +62,10 @@ class ProductController extends Controller
             'category_id' => 'required|numeric'
         ]);
 
+        if (Product::where('SKU', $request->SKU)->exists()) {
+            return response()->json(['message' => 'The SKU already exists'], 200);
+        }
+
         $imagePath = null;
         if ($request->hasFile('photo')) {
             $imagePath = ProductUtil::upload($request->file('photo'), 'products');
@@ -149,6 +153,7 @@ class ProductController extends Controller
             );
         }
         return response()->json($product,200);
+        return response()->json(['message'=>"product updated successfully"],200);
     }
 
     /**
